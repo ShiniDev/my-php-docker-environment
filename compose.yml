@@ -1,0 +1,53 @@
+services:
+  # PHP Service (using PHP-FPM)
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: my_php_app_php
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      DB_HOST: "db"
+      DB_DATABASE: "myappdb"
+      DB_USER: "myappuser"
+      DB_PASSWORD: "myapppassword"
+    networks:
+      - app-network
+  # Web Server Service (using nginx)
+  webserver:
+    image: nginx:stable-alpine
+    container_name: my_php_app_webserver
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - app-network
+  # Database Service (using MySQL)
+  db:
+    image: mysql:8.0
+    container_name: my_php_app_db
+    ports:
+      - "33066:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "rootpassword"
+      MYSQL_DATABASE: "myappdb"
+      MYSQL_USER: "myappuser"
+      MYSQL_PASSWORD: "myapppassword"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+
+networks:
+  app-network:
+    driver: bridge
