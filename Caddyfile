@@ -1,0 +1,7 @@
+localhost {
+	reverse_proxy nginx:80
+}
+
+pma.localhost {
+	reverse_proxy phpmyadmin:80
+}

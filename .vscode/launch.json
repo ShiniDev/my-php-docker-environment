@@ -10,9 +10,8 @@
             "request": "launch",
             "port": 9003,
             "pathMappings": {
-                "/var/www/html": "${workspaceFolder}/src",
-            },
-            "log": true,
+                "/var/www/html": "${workspaceFolder}/src"
+            }
         },
         {
             "name": "Launch currently open script",
