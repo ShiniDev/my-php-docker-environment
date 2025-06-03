@@ -46,6 +46,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  # Uncomment node service if you want to use npm.
+  # node: 
+  #   image: node:24-alpine
+  # This keeps the service active, you can comment this out if you're only gonna use docker exec node npm ...
+  # Using that command will be like using npm in your /src directory.
+  #   entrypoint: [ "tail", "-f", "/dev/null" ]
+  #   working_dir: /app
+  #   volumes:
+  #     - ./src:/app
 
 volumes:
   caddy_data:
