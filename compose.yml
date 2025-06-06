@@ -20,6 +20,7 @@ services:
       - php-fpm
   php-fpm:
     build: ./build/php/
+    user: "${UID}:${GID}"
     restart: unless-stopped
     volumes:
       - ./src:/var/www/html
@@ -29,13 +30,15 @@ services:
     depends_on:
       - db
     environment:
-      DB_HOST: "db" # The db service
+      DB_CONNECTION: ${DATABASE_TYPE}
+      DB_HOST: ${DATABASE_HOST} # The db service
       DB_DATABASE: ${MYSQL_DATABASE}
       DB_USERNAME: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
+      XDG_CONFIG_HOME: ${XDG_CONFIG_HOME}
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -44,6 +47,8 @@ services:
   db:
     image: mysql
     restart: always
+    volumes:
+      - ./config/mysql/my.cnf:/etc/mysql/my.cnf:ro
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -58,14 +63,19 @@ services:
     working_dir: /app
     volumes:
       - ./src:/app
-  redis-stack:
-    image: redis/redis-stack:latest
+  # redis-stack:
+  #   image: redis/redis-stack:latest
+  #   ports:
+  #     - "8001:8001"
+  #   environment:
+  #     REDIS_ARGS: ${REDIS_ARGS}
+  #   volumes:
+  #     - redis_stack_data:/data
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
     ports:
-      - "8001:8001"
-    environment:
-      REDIS_ARGS: ${REDIS_ARGS}
-    volumes:
-      - redis_stack_data:/data
+      - "8025:8025"
 
 volumes:
   caddy_data:

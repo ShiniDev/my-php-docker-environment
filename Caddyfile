@@ -1,7 +1,11 @@
-localhost {
+https://localhost {
+	redir http://localhost{uri}
+}
+
+http://localhost {
 	reverse_proxy nginx:80
 }
 
-pma.localhost {
+http://pma.localhost {
 	reverse_proxy phpmyadmin:80
 }
